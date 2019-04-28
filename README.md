@@ -3,6 +3,8 @@
 2. Share Location
 3. Filter bad words
 4. time
+5. show user in room
+6. auto && unauto scroll page
 
 插件
 * socket.io  | Chat server
@@ -49,3 +51,29 @@ io.on('connection', (socket) => {
 ```
 
 -------------
+
+### logic scroll page
+
+``` javascript
+const autoscroll = () => {
+    // new msg element
+    const $newMessage = $messages.lastElementChild;
+
+    // get the new message css value
+    const newMessageStyles = getComputedStyle($newMessage)
+    const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+    // Height of the new message
+    const newMessageHeight = $newMessage.offsetHeight + newMessageMargin;
+
+    // visible height
+    const visibleHeight = $messages.offsetHeight;
+
+    // height of message container
+    const containerHeight = $messages.scrollHeight;
+    // how far can i scroll > 最上面是0 越下面 数字越大
+    const scrollOffset = $messages.scrollTop + visibleHeight;
+    if(containerHeight - newMessageHeight <= scrollOffset){
+        $messages.scrollTop = $messages.scrollHeight
+    }
+}
+```
