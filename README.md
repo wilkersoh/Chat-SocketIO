@@ -2,10 +2,12 @@
 1. Chat || notif
 2. Share Location
 3. Filter bad words
+4. time
 
 插件
 * socket.io  | Chat server
-* Mustache | render message
+* Mustache | Template
+* moment | Time
 
 <p>Client side的io libraby,才能使用接口io</p>
 
@@ -13,9 +15,15 @@
    <script src="/socket.io/socket.io.js"></script>
 ```
 
+#### socket.emit || io.emit || socket.broadcast.emit || io.to.emit
+* socket.emit  - send an events to specific client
+* io.emit - send to every connected client
+* socket.broadcast.emit - send to everyone except himself
+* io.to.emit  - send to everyone in a specific room
+
 #### emit | on
 * emit(event, value, cb)
-* on(event, cbFromEmitValue)
+* on(event, (value, cbFromEmitValue) )
 
 ``` javascript
     // server(emit) -> client(receive)
@@ -40,4 +48,4 @@ io.on('connection', (socket) => {
 })
 ```
 
---------------
+-------------

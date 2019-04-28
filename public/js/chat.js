@@ -1,5 +1,5 @@
 const socket = io();
-
+ 
 // Elements
 const $messageForm = document.querySelector('#message-form');
 const $messageFormInput = $messageForm.querySelector('input');
@@ -11,24 +11,29 @@ const $messages = document.querySelector('#messages');
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const locationMessageTemplate = document.querySelector('#location-template').innerHTML;
 
+// Options > "?username=yee&room=gs"
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
 // render message to html
 socket.on('message', (message) => {
-    // mustache 是html里的 script 插件 render html
+    // mustache 是html里的 script 插件 render html(render的地点，内容)
     const html = Mustache.render(messageTemplate, {
-        message
+        message: message.text,
+        createdAt: moment(message.createdAt).format('hh:mm a')
     });
     $messages.insertAdjacentHTML('beforeend', html);
 })
 
 // render link
-socket.on('locationMessage', (url) => {
-    console.log(url)
+socket.on('locationMessage', (message) => {
+    console.log(message);
     const html = Mustache.render(locationMessageTemplate, {
-        url
+        username: message.username,
+        url: message.url,
+        createdAt: moment(message.createdAt).format('hh:mm a')
     })
     $messages.insertAdjacentHTML('beforeend', html);
 })
-
 
 $messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -69,3 +74,9 @@ $sendLocationButton.addEventListener('click', () => {
     });
 })
 
+socket.emit('join', { username, room }, (error) => {
+    if(error){
+        alert(error);
+        location.href = '/'
+    }
+})
