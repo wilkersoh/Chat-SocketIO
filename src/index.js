@@ -26,9 +26,13 @@ io.on('connection', (socket) => {
         socket.join(user.room)
 
         // 当user连接 发送信息
-        socket.emit('message', generateMessage('Welcome~~~'));
+        socket.emit('message', generateMessage('Admin','Welcome~~~'));
         // 当 另外一个 user连接，发送信息提醒在room在线的user
-        socket.broadcast.to(user.room).emit('message', generateMessage(`${user.username} has joined`))
+        socket.broadcast.to(user.room).emit('message', generateMessage('Admin',`${user.username} has joined`))
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
         cb()
     })
 
@@ -42,7 +46,7 @@ io.on('connection', (socket) => {
         }
 
         // server share收到的信息 给 Alluser
-        io.to(user.room).emit('message', generateMessage(message));
+        io.to(user.room).emit('message', generateMessage(user.username, message));
         cb()
     });
 
@@ -56,7 +60,11 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         const user = removeUser(socket.id);
         if(user){
-            io.to(user.room).emit('message', generateMessage(`${user.username} has left.`))
+            io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left.`))
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
     })
 })
